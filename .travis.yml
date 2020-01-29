@@ -6,6 +6,8 @@ env:
   - RELEASE_TAG="release-$TRAVIS_BUILD_NUMBER"
 if: tag IS blank
 
+befor install:
+  - chmod +x gradlew
 
 jobs:
   include:
