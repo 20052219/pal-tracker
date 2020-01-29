@@ -22,13 +22,13 @@ public class TimeEntryControllerTest {
     private TimeEntryController controller;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         timeEntryRepository = mock(TimeEntryRepository.class);
         controller = new TimeEntryController(timeEntryRepository);
     }
 
     @Test
-    public void testCreate() {
+    public void testCreate() throws Exception {
         long projectId = 123L;
         long userId = 456L;
         TimeEntry timeEntryToCreate = new TimeEntry(projectId, userId, LocalDate.parse("2017-01-08"), 8);
@@ -49,7 +49,7 @@ public class TimeEntryControllerTest {
     }
 
     @Test
-    public void testRead() {
+    public void testRead() throws Exception {
         long timeEntryId = 1L;
         long projectId = 123L;
         long userId = 456L;
@@ -66,7 +66,7 @@ public class TimeEntryControllerTest {
     }
 
     @Test
-    public void testRead_NotFound() {
+    public void testRead_NotFound() throws Exception {
         long nonExistentTimeEntryId = 1L;
         doReturn(null)
             .when(timeEntryRepository)
@@ -77,7 +77,7 @@ public class TimeEntryControllerTest {
     }
 
     @Test
-    public void testList() {
+    public void testList() throws Exception {
         List<TimeEntry> expected = asList(
             new TimeEntry(1L, 123L, 456L, LocalDate.parse("2017-01-08"), 8),
             new TimeEntry(2L, 789L, 321L, LocalDate.parse("2017-01-07"), 4)
@@ -92,7 +92,7 @@ public class TimeEntryControllerTest {
     }
 
     @Test
-    public void testUpdate() {
+    public void testUpdate() throws Exception {
         long timeEntryId = 1L;
         long projectId = 987L;
         long userId = 654L;
@@ -109,7 +109,7 @@ public class TimeEntryControllerTest {
     }
 
     @Test
-    public void testUpdate_NotFound() {
+    public void testUpdate_NotFound() throws Exception {
         long nonExistentTimeEntryId = 1L;
         doReturn(null)
             .when(timeEntryRepository)
@@ -120,9 +120,9 @@ public class TimeEntryControllerTest {
     }
 
     @Test
-    public void testDelete() {
+    public void testDelete() throws Exception {
         long timeEntryId = 1L;
-        ResponseEntity response = controller.delete(timeEntryId);
+        ResponseEntity<TimeEntry> response = controller.delete(timeEntryId);
         verify(timeEntryRepository).delete(timeEntryId);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
