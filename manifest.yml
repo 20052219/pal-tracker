@@ -1,5 +1,5 @@
 applications:
-  - name: pal-tracker5
+  - name: pal-tracker7
     path: build/libs/pal-tracker.jar
     random-route: true
     env:
