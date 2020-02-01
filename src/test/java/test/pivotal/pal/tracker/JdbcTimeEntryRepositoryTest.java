@@ -22,7 +22,7 @@ public class JdbcTimeEntryRepositoryTest {
     private JdbcTemplate jdbcTemplate;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         MysqlDataSource dataSource = new MysqlDataSource();
         dataSource.setUrl(System.getenv("SPRING_DATASOURCE_URL"));
 
@@ -35,7 +35,7 @@ public class JdbcTimeEntryRepositoryTest {
     }
 
     @Test
-    public void createInsertsATimeEntryRecord() {
+    public void createInsertsATimeEntryRecord() throws Exception {
         TimeEntry newTimeEntry = new TimeEntry(123, 321, LocalDate.parse("2017-01-09"), 8);
         TimeEntry entry = subject.create(newTimeEntry);
 
@@ -49,7 +49,7 @@ public class JdbcTimeEntryRepositoryTest {
     }
 
     @Test
-    public void createReturnsTheCreatedTimeEntry() {
+    public void createReturnsTheCreatedTimeEntry() throws Exception {
         TimeEntry newTimeEntry = new TimeEntry(123, 321, LocalDate.parse("2017-01-09"), 8);
         TimeEntry entry = subject.create(newTimeEntry);
 
@@ -61,7 +61,7 @@ public class JdbcTimeEntryRepositoryTest {
     }
 
     @Test
-    public void findFindsATimeEntry() {
+    public void findFindsATimeEntry() throws Exception {
         jdbcTemplate.execute(
                 "INSERT INTO time_entries (id, project_id, user_id, date, hours) " +
                         "VALUES (999, 123, 321, '2017-01-09', 8)"
@@ -77,14 +77,14 @@ public class JdbcTimeEntryRepositoryTest {
     }
 
     @Test
-    public void findReturnsNullWhenNotFound() {
+    public void findReturnsNullWhenNotFound() throws Exception {
         TimeEntry timeEntry = subject.find(999L);
 
         assertThat(timeEntry).isNull();
     }
 
     @Test
-    public void listFindsAllTimeEntries() {
+    public void listFindsAllTimeEntries() throws Exception {
         jdbcTemplate.execute(
                 "INSERT INTO time_entries (id, project_id, user_id, date, hours) " +
                         "VALUES (999, 123, 321, '2017-01-09', 8), (888, 456, 678, '2017-01-08', 9)"
@@ -109,7 +109,7 @@ public class JdbcTimeEntryRepositoryTest {
     }
 
     @Test
-    public void updateReturnsTheUpdatedRecord() {
+    public void updateReturnsTheUpdatedRecord() throws Exception {
         jdbcTemplate.execute(
                 "INSERT INTO time_entries (id, project_id, user_id, date, hours) " +
                         "VALUES (1000, 123, 321, '2017-01-09', 8)");
@@ -126,7 +126,7 @@ public class JdbcTimeEntryRepositoryTest {
     }
 
     @Test
-    public void updateUpdatesTheRecord() {
+    public void updateUpdatesTheRecord() throws Exception {
         jdbcTemplate.execute(
                 "INSERT INTO time_entries (id, project_id, user_id, date, hours) " +
                         "VALUES (1000, 123, 321, '2017-01-09', 8)");
@@ -145,17 +145,15 @@ public class JdbcTimeEntryRepositoryTest {
     }
 
     @Test
-    public void deleteRemovesTheRecord() {
+    public void deleteRemovesTheRecord() throws Exception {
         jdbcTemplate.execute(
                 "INSERT INTO time_entries (id, project_id, user_id, date, hours) " +
-                        "VALUES (999, 123, 321, '2017-01-09', 8), (888, 456, 678, '2017-01-08', 9)"
+                        "VALUES (999, 123, 321, '2017-01-09', 8)"
         );
 
         subject.delete(999L);
 
-        Map<String, Object> notFoundEntry = jdbcTemplate.queryForMap("Select count(*) count from time_entries where id = ?", 999);
-        assertThat(notFoundEntry.get("count")).isEqualTo(0L);
-        Map<String, Object> foundEntry = jdbcTemplate.queryForMap("Select count(*) count from time_entries where id = ?", 888);
-        assertThat(foundEntry.get("count")).isEqualTo(1L);
+        Map<String, Object> foundEntry = jdbcTemplate.queryForMap("Select count(*) count from time_entries where id = ?", 999);
+        assertThat(foundEntry.get("count")).isEqualTo(0L);
     }
 }
